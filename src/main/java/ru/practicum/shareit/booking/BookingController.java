@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -23,6 +25,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
+@Validated
 public class BookingController {
     private final BookingService bookingService;
 
@@ -55,15 +58,19 @@ public class BookingController {
 
     @GetMapping
     public List<Booking> getBookingsByState(@RequestHeader("X-Sharer-User-Id") long userId,
-                                               @RequestParam(required = false) String state) {
-        log.info("Request for get bookings in state {} from user {}", state, userId);
-        return bookingService.getBookingByState(userId, state);
+                                            @RequestParam(required = false) String state,
+                                            @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                            @PositiveOrZero @RequestParam(defaultValue = "50", required = false) Integer size)  {
+        log.info("Request for get {} bookings in state {} from user {} from {}", size, state, userId, from);
+        return bookingService.getBookingByState(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<Booking> getBookingsByOwnerAndState(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                       @RequestParam(required = false) String state) {
-        log.info("Request for get bookings of user {} in state {}", userId, state);
-        return bookingService.getBookingsByOwnerAndState(userId, state);
+                                                    @RequestParam(required = false) String state,
+                                                    @RequestParam(required = false) Integer from,
+                                                    @RequestParam(required = false) Integer size)  {
+        log.info("Request for get {} bookings of user {} in state {} from {}", size, userId, state, from);
+        return bookingService.getBookingsByOwnerAndState(userId, state, from, size);
     }
 }

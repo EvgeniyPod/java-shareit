@@ -146,6 +146,12 @@
 					<version>0.8.8</version>
 					<configuration>
 						<output>file</output>
+						<excludes>
+							<exclude>**/*ItemRequest.class</exclude>
+							<exclude>**/*ExistEmailException.class</exclude>
+							<exclude>**/*InvalidItemArrtsException.class</exclude>
+							<exclude>**/*AlreadyExistEmailException.class</exclude>
+						</excludes>
 					</configuration>
 					<executions>
 						<execution>
