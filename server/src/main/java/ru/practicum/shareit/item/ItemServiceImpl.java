@@ -65,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
         }
         User user = userService.getUserById(userId);
         return itemRepository.save(ItemMapper.toItem(itemRepository.findByUserIdAndId(userId, itemId)
-                .orElseThrow(() -> new InvalidItemIdException(itemId)), itemDto, user,
+                        .orElseThrow(() -> new InvalidItemIdException(itemId)), itemDto, user,
                 itemDto.getRequestId() != null ? itemRequestRepository
                         .findById(itemDto.getRequestId()).orElse(null) : null));
     }
@@ -112,13 +112,13 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDtoWithCommentsAndBookingInfo(item,
                 CommentMapper.toCommentDto(commentRepository.findByItemId(itemId)),
                 item.getUser().getId() == userId ?
-                    BookingMapper.toBookingDto(bookingRepository
-                            .findTopByItemIdAndStartDateBeforeOrderByStartDateDesc(itemId,
-                        LocalDateTime.now()).orElse(null)) : null,
+                        BookingMapper.toBookingDto(bookingRepository
+                                .findTopByItemIdAndStartDateBeforeOrderByStartDateDesc(itemId,
+                                        LocalDateTime.now()).orElse(null)) : null,
                 item.getUser().getId() == userId ?
-                    BookingMapper.toBookingDto(bookingRepository
-                            .findTopByItemIdAndStartDateAfterAndStatusInOrderByStartDateAsc(itemId,
-                        LocalDateTime.now(), List.of(BookingStatus.WAITING, BookingStatus.APPROVED)).orElse(null)) : null);
+                        BookingMapper.toBookingDto(bookingRepository
+                                .findTopByItemIdAndStartDateAfterAndStatusInOrderByStartDateAsc(itemId,
+                                        LocalDateTime.now(), List.of(BookingStatus.WAITING, BookingStatus.APPROVED)).orElse(null)) : null);
     }
 
     @Override
@@ -142,15 +142,15 @@ public class ItemServiceImpl implements ItemService {
             items = itemRepository.findByUserIdOrderByIdAsc(userId, page).get();
         }
         return items.map(item -> ItemMapper.toItemDtoWithBookingInfo(item,
-                            item.getUser().getId() == userId ?
-                                    BookingMapper.toBookingDto(bookingRepository
-                                            .findTopByItemIdAndStartDateBeforeOrderByStartDateDesc(item.getId(),
-                                                    LocalDateTime.now()).orElse(null)) : null,
-                            item.getUser().getId() == userId ?
-                                    BookingMapper.toBookingDto(bookingRepository
-                                            .findTopByItemIdAndStartDateAfterAndStatusInOrderByStartDateAsc(item.getId(),
-                                                    LocalDateTime.now(),
-                                                    List.of(BookingStatus.WAITING, BookingStatus.APPROVED)).orElse(null)) : null))
+                        item.getUser().getId() == userId ?
+                                BookingMapper.toBookingDto(bookingRepository
+                                        .findTopByItemIdAndStartDateBeforeOrderByStartDateDesc(item.getId(),
+                                                LocalDateTime.now()).orElse(null)) : null,
+                        item.getUser().getId() == userId ?
+                                BookingMapper.toBookingDto(bookingRepository
+                                        .findTopByItemIdAndStartDateAfterAndStatusInOrderByStartDateAsc(item.getId(),
+                                                LocalDateTime.now(),
+                                                List.of(BookingStatus.WAITING, BookingStatus.APPROVED)).orElse(null)) : null))
                 .collect(Collectors.toList());
     }
 
@@ -169,23 +169,6 @@ public class ItemServiceImpl implements ItemService {
             final Pageable page = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "id"));
             return ItemMapper.toItemDto(itemRepository.searchItemsByText(text, text, page).getContent());
         }
-/*        if (text == null || text.isEmpty() || text.isBlank()) {
-            return new ArrayList<>();
-        }
-        userService.checkUser(userId);
-        if (from == null || size == null) {
-            return ItemMapper.toItemDto(itemRepository
-                    .findByAvailableTrueAndUserIdAndNameContainingIgnoreCaseOrAvailableTrueAndDescriptionContainingIgnoreCase(userId,
-                            text, text));
-        } else if (from < 0 || size <= 0) {
-            throw new InvalidPathVariableException("Incorrect page parameters");
-        } else {
-            int pageNumber = from / size;
-            final Pageable page = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "id"));
-            return ItemMapper.toItemDto(itemRepository
-                    .findByAvailableTrueAndUserIdAndNameContainingIgnoreCaseOrAvailableTrueAndDescriptionContainingIgnoreCase(userId,
-                            text, text, page).getContent());
-        }*/
     }
 
     @Override
